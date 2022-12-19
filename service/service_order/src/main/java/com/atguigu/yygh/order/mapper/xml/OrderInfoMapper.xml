@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.yygh.order.mapper.OrderInfoMapper">
+    <!--
+        在这里把这两个字段查询出来之后，在这里起了两个别名，就是数据表中查询出来的这些多行数据，
+        最终要封装到上面resultType的pojo对象列表里。
+        所以，它需要把这些查询出来的列名一定要和这个pojo对象的属性名对应起来。这样返回的结果才能封装到pojo列表里
+     -->
+    <select id="statistics" resultType="com.atguigu.yygh.vo.order.OrderCountVo">
+
+        select reserve_date as reserveDate, count(reserve_date) as count
+        from order_info
+        <where>
+            <if test="hosname != null and hosname != ''">
+                and hosname like CONCAT('%',#{hosname},'%')
+            </if>
+            <if test="reserveDateBegin != null and reserveDateBegin != ''">
+                and reserve_date >= #{reserveDateBegin}
+            </if>
+            <if test="reserveDateEnd != null and reserveDateEnd != ''">
+                <![CDATA[and reserve_date <= #{reserveDateEnd}]]>
+            </if>
+            and is_deleted = 0
+        </where>
+        group by reserve_date
+        order by reserve_date
+    </select>
+</mapper>
